@@ -1,5 +1,5 @@
 #TODO
 
-- Add Kafka producer (https://github.com/confluentinc/confluent-kafka-go)
-- Add support for non-blocking requests
+- Add support for non blocking queuing worker
+- Add benchmark test suite
 - Add deployment

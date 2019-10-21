@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"time"
 
-	. "github.com/davidmontoyago/go-kafka-ingestor-api/pkg/kafka/log"
-	producer "github.com/davidmontoyago/go-kafka-ingestor-api/pkg/kafka/producer"
+	. "github.com/davidmontoyago/go-event-ingestor-api/pkg/ingestor/log"
+	producer "github.com/davidmontoyago/go-event-ingestor-api/pkg/ingestor/producer"
 	"github.com/gorilla/mux"
 )
 

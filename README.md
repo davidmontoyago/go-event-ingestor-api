@@ -1,1 +1,1 @@
-# go-kafka-ingestor-api
+# go-event-ingestor-api

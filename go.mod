@@ -1,4 +1,4 @@
-module github.com/davidmontoyago/go-kafka-ingestor-api
+module github.com/davidmontoyago/go-event-ingestor-api
 
 go 1.12
 
