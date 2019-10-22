@@ -1,15 +1,13 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
-	. "github.com/davidmontoyago/go-event-ingestor-api/pkg/ingestor/log"
-	producer "github.com/davidmontoyago/go-event-ingestor-api/pkg/ingestor/producer"
+	. "github.com/davidmontoyago/go-event-ingestor-api/pkg/ingestor"
+	log "github.com/davidmontoyago/go-event-ingestor-api/pkg/log"
 	"github.com/gorilla/mux"
 )
 
@@ -25,32 +23,19 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	log.Fatal(srv.ListenAndServe())
+	log.Error.Fatal(srv.ListenAndServe())
 }
 
 func ingestPayload(w http.ResponseWriter, r *http.Request) {
-	payload, err := fromJson(r)
+	payload, err := FromJson(r)
 	if err != nil {
-		http.Error(w, toJsonError(err), http.StatusBadRequest)
+		http.Error(w, ToJsonError(err), http.StatusBadRequest)
 		return
 	}
-	Info.Println(fmt.Sprintf("ingested event for application %s [CorrelationId: %s]", payload.ApplicationId,
+
+	go Dispatch(payload)
+
+	log.Info.Println(fmt.Sprintf("ingested event for application %s [CorrelationId: %s]", payload.ApplicationId,
 		payload.CorrelationId))
 	json.NewEncoder(w).Encode(map[string]bool{"ok": true})
-}
-
-func fromJson(r *http.Request) (*producer.Payload, error) {
-	decoder := json.NewDecoder(r.Body)
-	var payload *producer.Payload
-	err := decoder.Decode(&payload)
-	if err != nil {
-		return payload, err
-	}
-	return payload, nil
-}
-
-func toJsonError(err error) string {
-	errorResponse := new(bytes.Buffer)
-	json.NewEncoder(errorResponse).Encode(map[string]string{"ok": "false", "error": err.Error()})
-	return errorResponse.String()
 }

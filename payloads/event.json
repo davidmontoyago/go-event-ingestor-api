@@ -1,8 +1,9 @@
 {
   "CorrelationId": "123456789",
-	"OriginDatetime": "2019/10/16 19:03:19",
+	"OriginTimestamp": "2019/10/16 19:03:19",
 	"IsSynthetic": true,
 	"ApplicationId": "customer-web-api-host-1-region-east",
+  "ApiVersion": "v1beta",
 	"EventHeader": "click-event",
 	"EventBody": "event details"
 }
