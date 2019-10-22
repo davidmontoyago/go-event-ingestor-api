@@ -21,3 +21,7 @@ clean:
 fmt:
 	$(GOCMD) fmt ./pkg/
 	$(GOCMD) fmt ./main.go
+
+run:
+	make build
+	./go-event-ingestor-api
