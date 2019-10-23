@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	. "github.com/davidmontoyago/go-event-ingestor-api/pkg/ingestor"
@@ -15,9 +16,15 @@ func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/ingest", ingestPayload).Methods("PUT")
 
+	hostname, err := os.Hostname()
+	if err != nil {
+		log.Error.Fatal(err)
+		return
+	}
+
 	srv := &http.Server{
 		Handler: router,
-		Addr:    "127.0.0.1:8080",
+		Addr:    fmt.Sprintf("%s:8080", hostname),
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
