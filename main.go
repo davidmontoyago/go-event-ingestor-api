@@ -30,6 +30,7 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 
+	WorkQueue = make(chan Payload)
 	StartWorkProcessorPool(10)
 
 	log.Error.Fatal(srv.ListenAndServe())
@@ -41,7 +42,7 @@ func StartWorkProcessor() {
 	for {
 		select {
 		case payload := <-WorkQueue:
-			 Process(payload)
+			go Process(payload)
 		}
 	}
 }
