@@ -30,7 +30,26 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 
+	StartWorkProcessorPool(10)
+
 	log.Error.Fatal(srv.ListenAndServe())
+}
+
+var WorkQueue chan Payload
+
+func StartWorkProcessor() {
+	for {
+		select {
+		case payload := <-WorkQueue:
+			 Process(payload)
+		}
+	}
+}
+
+func StartWorkProcessorPool(maxProcessors int) {
+	for i := 0; i < maxProcessors; i++ {
+		go StartWorkProcessor()
+	}
 }
 
 func ingestPayload(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +59,7 @@ func ingestPayload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go Dispatch(payload)
+	WorkQueue <- *payload
 
 	log.Info.Println(fmt.Sprintf("ingested event for application %s [CorrelationId: %s]", payload.ApplicationId,
 		payload.CorrelationId))
