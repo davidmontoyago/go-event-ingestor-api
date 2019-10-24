@@ -12,6 +12,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var workQueue *WorkQueue
+
 func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/ingest", ingestPayload).Methods("PUT")
@@ -30,27 +32,10 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	WorkQueue = make(chan Payload)
-	StartWorkProcessorPool(10)
+	workQueue = NewWorkQueue()
+	workQueue.StartWorkProcessorPool(10)
 
 	log.Error.Fatal(srv.ListenAndServe())
-}
-
-var WorkQueue chan Payload
-
-func StartWorkProcessor() {
-	for {
-		select {
-		case payload := <-WorkQueue:
-			go Process(payload)
-		}
-	}
-}
-
-func StartWorkProcessorPool(maxProcessors int) {
-	for i := 0; i < maxProcessors; i++ {
-		go StartWorkProcessor()
-	}
 }
 
 func ingestPayload(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +45,7 @@ func ingestPayload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	WorkQueue <- *payload
+	workQueue.Enqueue(*payload)
 
 	log.Info.Println(fmt.Sprintf("ingested event for application %s [CorrelationId: %s]", payload.ApplicationId,
 		payload.CorrelationId))

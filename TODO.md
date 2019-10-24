@@ -1,5 +1,6 @@
 #TODO
 
-- Add support for non blocking queuing worker
-- Add benchmark test suite
 - Add deployment
+- Terminates queued work safely
+- Abstract away payload with an interface
+- Defer serialization to workers
