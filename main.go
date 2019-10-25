@@ -33,7 +33,7 @@ func main() {
 	}
 
 	workQueue = NewWorkQueue()
-	workQueue.StartWorkProcessorPool(10)
+	workQueue.StartWorkProcessorPool(10000)
 
 	log.Error.Fatal(srv.ListenAndServe())
 }

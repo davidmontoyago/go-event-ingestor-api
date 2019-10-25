@@ -10,20 +10,22 @@ func NewWorkQueue() *WorkQueue {
 	}
 }
 
-// Reads of the work queue and defers to the backend
+// Reads off the work queue and defers to the backend
 func (w WorkQueue) StartWorkProcessor() {
-	for {
-		select {
-		case payload := <-w.queue:
-			go Process(payload)
+	go func() {
+		for {
+			select {
+			case payload := <-w.queue:
+				Process(payload)
+			}
 		}
-	}
+	}()
 }
 
-// Fires a set of goroutines that will be reading work of the queue channel
+// Fires a set of goroutines that will be reading work off the channel
 func (w WorkQueue) StartWorkProcessorPool(maxProcessors int) {
 	for i := 0; i < maxProcessors; i++ {
-		go w.StartWorkProcessor()
+		w.StartWorkProcessor()
 	}
 }
 
