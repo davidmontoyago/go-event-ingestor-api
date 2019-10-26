@@ -13,11 +13,8 @@ func NewWorkQueue() *WorkQueue {
 // Reads off the work queue and defers to the backend
 func (w WorkQueue) StartWorkProcessor() {
 	go func() {
-		for {
-			select {
-			case payload := <-w.queue:
-				Process(payload)
-			}
+		for payload := range w.queue {
+			Process(payload)
 		}
 	}()
 }
