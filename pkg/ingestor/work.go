@@ -6,7 +6,7 @@ type WorkQueue struct {
 
 func NewWorkQueue() *WorkQueue {
 	return &WorkQueue{
-		queue: make(chan Payload),
+		queue: make(chan Payload, 10000),
 	}
 }
 
