@@ -5,6 +5,8 @@ GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 GO111MODULE=on
+GOOS?=darwin
+GOARCH=amd64
 
 all: test build
 
