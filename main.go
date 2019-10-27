@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
@@ -13,11 +11,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var workQueue *WorkQueue
-
 func main() {
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/ingest", ingestPayload).Methods("PUT")
+	router.HandleFunc("/ingest", IngestPayload).Methods("PUT")
 
 	hostname, err := os.Hostname()
 	if err != nil {
@@ -26,29 +22,11 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Handler: router,
-		Addr:    fmt.Sprintf("%s:8080", hostname),
-		// Good practice: enforce timeouts for servers you create!
+		Handler:      router,
+		Addr:         fmt.Sprintf("%s:8080", hostname),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
 
-	workQueue = NewWorkQueue()
-	workQueue.StartWorkProcessorPool(10000)
-
 	log.Error.Fatal(srv.ListenAndServe())
-}
-
-func ingestPayload(w http.ResponseWriter, r *http.Request) {
-	jsonPayload, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, ToJsonError(err), http.StatusBadRequest)
-		return
-	}
-
-	workQueue.Enqueue(func() (Payload, error) {
-		return FromJson(jsonPayload)
-	})
-
-	json.NewEncoder(w).Encode(map[string]bool{"ok": true})
 }
