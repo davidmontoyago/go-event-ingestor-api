@@ -1,12 +1,12 @@
 package ingestor
 
 type WorkQueue struct {
-	queue chan Payload
+	queue chan PayloadReader
 }
 
 func NewWorkQueue() *WorkQueue {
 	return &WorkQueue{
-		queue: make(chan Payload, 10000),
+		queue: make(chan PayloadReader, 10000),
 	}
 }
 
@@ -26,6 +26,6 @@ func (w WorkQueue) StartWorkProcessorPool(maxProcessors int) {
 	}
 }
 
-func (w WorkQueue) Enqueue(payload Payload) {
+func (w WorkQueue) Enqueue(payload PayloadReader) {
 	w.queue <- payload
 }

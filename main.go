@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
@@ -39,15 +40,15 @@ func main() {
 }
 
 func ingestPayload(w http.ResponseWriter, r *http.Request) {
-	payload, err := FromJson(r)
+	jsonPayload, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, ToJsonError(err), http.StatusBadRequest)
 		return
 	}
 
-	workQueue.Enqueue(*payload)
+	workQueue.Enqueue(func() (Payload, error) {
+		return FromJson(jsonPayload)
+	})
 
-	log.Info.Println(fmt.Sprintf("ingested event for application %s [CorrelationId: %s]", payload.ApplicationId,
-		payload.CorrelationId))
 	json.NewEncoder(w).Encode(map[string]bool{"ok": true})
 }
