@@ -7,6 +7,8 @@ GOGET=$(GOCMD) get
 GO111MODULE=on
 GOOS?=darwin
 GOARCH=amd64
+MAX_QUEUE=100000
+MAX_WORKERS=10000
 
 all: test build
 
@@ -21,9 +23,9 @@ clean:
 	$(GOCLEAN)
 
 fmt:
-	$(GOCMD) fmt ./pkg/
+	$(GOCMD) fmt ./pkg/...
 	$(GOCMD) fmt ./main.go
 
 run:
 	make build
-	./go-event-ingestor-api
+	MAX_QUEUE=$(MAX_QUEUE) MAX_WORKERS=$(MAX_WORKERS) ./go-event-ingestor-api

@@ -1,12 +1,14 @@
 package ingestor
 
 type WorkQueue struct {
-	queue chan PayloadReader
+	queue      chan PayloadReader
+	maxWorkers int
 }
 
-func NewWorkQueue() *WorkQueue {
+func NewWorkQueue(maxQueue int, maxWorkers int) *WorkQueue {
 	return &WorkQueue{
-		queue: make(chan PayloadReader, 10000),
+		queue:      make(chan PayloadReader, maxQueue),
+		maxWorkers: maxWorkers,
 	}
 }
 
@@ -20,8 +22,8 @@ func (w WorkQueue) StartWorkProcessor() {
 }
 
 // Fires a set of goroutines that will be reading work off the channel
-func (w WorkQueue) StartWorkProcessorPool(maxProcessors int) {
-	for i := 0; i < maxProcessors; i++ {
+func (w WorkQueue) StartWorkProcessorPool() {
+	for i := 0; i < w.maxWorkers; i++ {
 		w.StartWorkProcessor()
 	}
 }
