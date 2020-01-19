@@ -24,8 +24,8 @@ func main() {
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         fmt.Sprintf("%s:8080", hostname),
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		ReadTimeout:  5 * time.Second,
 	}
 
 	log.Error.Fatal(srv.ListenAndServe())

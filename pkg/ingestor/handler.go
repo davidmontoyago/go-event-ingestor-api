@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	log "github.com/davidmontoyago/go-event-ingestor-api/pkg/log"
+	"github.com/davidmontoyago/go-event-ingestor-api/pkg/payload"
 )
 
 var workQueue *WorkQueue
@@ -21,21 +22,23 @@ func init() {
 	workQueue.StartWorkProcessorPool()
 }
 
+// IngestPayload defers the reading/processing of the request payload to workers
 func IngestPayload(w http.ResponseWriter, r *http.Request) {
 	jsonPayload, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
 	if err != nil {
-		http.Error(w, ToJsonError(err), http.StatusBadRequest)
+		http.Error(w, toJSONError(err), http.StatusBadRequest)
 		return
 	}
 
-	workQueue.Enqueue(func() (Payload, error) {
-		return FromJson(jsonPayload)
+	workQueue.Enqueue(func() (payload.Payload, error) {
+		return payload.FromJSON(jsonPayload)
 	})
 
 	json.NewEncoder(w).Encode(map[string]bool{"ok": true})
 }
 
-func ToJsonError(err error) string {
+func toJSONError(err error) string {
 	errorResponse := new(bytes.Buffer)
 	json.NewEncoder(errorResponse).Encode(map[string]string{"ok": "false", "error": err.Error()})
 	return errorResponse.String()

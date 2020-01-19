@@ -1,9 +1,10 @@
-package ingestor
+package payload
 
 import (
 	"encoding/json"
 )
 
+// Payload event type
 type Payload struct {
 	CorrelationId   string
 	OriginTimestamp string
@@ -14,9 +15,11 @@ type Payload struct {
 	EventBody       string
 }
 
+// PayloadReader deserializes a json payload... json string must be included in a closure
 type PayloadReader func() (Payload, error)
 
-func FromJson(jsonPayload []byte) (Payload, error) {
+// FromJSON deserializes a JSON payload
+func FromJSON(jsonPayload []byte) (Payload, error) {
 	payload := Payload{}
 	err := json.Unmarshal(jsonPayload, &payload)
 	return payload, err
