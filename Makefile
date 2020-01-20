@@ -27,5 +27,9 @@ fmt:
 	$(GOCMD) fmt ./main.go
 
 run:
+	rm ./go-event-ingestor-api
 	make build
 	MAX_QUEUE=$(MAX_QUEUE) MAX_WORKERS=$(MAX_WORKERS) ./go-event-ingestor-api
+
+pre-reqs:
+	brew install hey

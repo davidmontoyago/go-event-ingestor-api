@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu -o pipefail
 
-HOST="$(hostname)"
+HOST="localhost"
 PORT="8080"
 URL="http://$HOST:$PORT/ingest"
 
@@ -10,11 +10,8 @@ CONCURRENCY=100
 
 BECHNMARK_VERSION=$(git rev-parse HEAD)
 
-echo "starting load test against $URL..."
+echo "load testing $URL..."
 
-docker run --rm -v `pwd`:`pwd` -w `pwd` -p 8080:8080 --network="bridge" jordi/ab \
-  -k -n $REQUESTS -c $CONCURRENCY \
-  -T "Content-Type: application/json" \
-  -u payloads/event.json "$URL" > ./benchmarks/$BECHNMARK_VERSION.test
+hey -h2 -n $REQUESTS -c $CONCURRENCY -m PUT -H "Content-Type: application/json" -D payloads/event.json $URL > ./benchmarks/$BECHNMARK_VERSION.test
 
 cat ./benchmarks/$BECHNMARK_VERSION.test
