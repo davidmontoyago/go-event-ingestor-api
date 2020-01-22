@@ -14,3 +14,9 @@ make run
 ``` bash
 ./benchmark.sh
 ```
+
+## Generate JSON codec
+
+```
+make codec
+```
