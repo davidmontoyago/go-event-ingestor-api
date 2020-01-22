@@ -8,7 +8,7 @@ import (
 )
 
 // Process reads the payload and processes it
-func Process(reader payload.PayloadReader) {
+func Process(reader payload.Reader) {
 	payload, err := reader()
 	if err != nil {
 		log.Error.Println("failed to ready payload", err)
@@ -16,5 +16,5 @@ func Process(reader payload.PayloadReader) {
 		return
 	}
 	time.Sleep(100 * time.Millisecond)
-	log.Info.Printf("ingested event for application %s [CorrelationId: %s]\n", payload.ApplicationId, payload.CorrelationId)
+	log.Info.Printf("ingested event for application %s [CorrelationID: %s]\n", payload.ApplicationID, payload.CorrelationID)
 }

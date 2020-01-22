@@ -7,14 +7,14 @@ import (
 
 // WorkQueue contains a channel
 type WorkQueue struct {
-	queue      chan payload.PayloadReader
+	queue      chan payload.Reader
 	maxWorkers int
 }
 
 // NewWorkQueue initializes worker queue
 func NewWorkQueue(maxQueue int, maxWorkers int) *WorkQueue {
 	return &WorkQueue{
-		queue:      make(chan payload.PayloadReader, maxQueue),
+		queue:      make(chan payload.Reader, maxQueue),
 		maxWorkers: maxWorkers,
 	}
 }
@@ -36,6 +36,6 @@ func (w WorkQueue) StartWorkProcessorPool() {
 }
 
 // Enqueue adds a payload to the processing queue
-func (w WorkQueue) Enqueue(payload payload.PayloadReader) {
+func (w WorkQueue) Enqueue(payload payload.Reader) {
 	w.queue <- payload
 }
